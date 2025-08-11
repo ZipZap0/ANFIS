@@ -1,0 +1,39 @@
+[System]
+Name='anfis_trained'
+Type='sugeno'
+Version=2.0
+NumInputs=1
+NumOutputs=1
+NumRules=5
+AndMethod='prod'
+OrMethod='probor'
+ImpMethod='prod'
+AggMethod='sum'
+DefuzzMethod='wtaver'
+
+[Input1]
+Name='Error'
+Range=[-26 26]
+NumMFs=5
+MF1='Negatif besar':'trimf',[-31.7397295632003 -19.3394865285305 -4.99956883046655]
+MF2='Negatif kecil':'trimf',[-24.9215038854089 -9.61260130339732 1.36815047635811]
+MF3='Nol':'trimf',[-2.76176767801843 0.058704636272333 2.74727150588676]
+MF4='Positif kecil':'trimf',[-1.24935884893309 9.60401719278238 24.9218819551246]
+MF5='Positif besar':'trimf',[5.00433852270893 19.3406164605226 31.7408556741705]
+
+[Output1]
+Name='Control'
+Range=[-24 24]
+NumMFs=5
+MF1='Out1':'constant',[-23.7951633697915]
+MF2='Out2':'constant',[-1.91980572628287]
+MF3='Out3':'constant',[0.0257322967169157]
+MF4='Out4':'constant',[1.92019021197409]
+MF5='Out5':'constant',[23.7938388131783]
+
+[Rules]
+1, 1 (1) : 1
+2, 2 (1) : 1
+3, 3 (1) : 1
+4, 4 (1) : 1
+5, 5 (1) : 1
