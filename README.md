@@ -1,111 +1,111 @@
-# 🧠 Sistem Kontrol Sudut Yaw Berbasis ANFIS (Adaptive Neuro-Fuzzy Inference System)  
-**Intelligent Control for Orientation Stabilization Using Neuro-Fuzzy Learning**
+# 🧠 Yaw Angle Control System Using ANFIS (Adaptive Neuro-Fuzzy Inference System)  
+**Intelligent Orientation Stabilization with Neuro-Fuzzy Learning**
 
-> 📌 *Proyek ini mengimplementasikan sistem kontrol adaptif cerdas berbasis ANFIS untuk mengoreksi sudut yaw (heading) pada sistem dinamis seperti drone, robot otonom, atau kendaraan bergerak. Dengan menggabungkan kekuatan logika fuzzy dan jaringan syaraf tiruan, sistem mampu belajar dari data dan menghasilkan keputusan kontrol yang optimal secara realistis.*
-
----
-
-## 📌 Ringkasan Proyek
-
-Sistem kontrol orientasi berbasis **ANFIS (Adaptive Neuro-Fuzzy Inference System)** ini dirancang untuk mengatasi permasalahan umum dalam sistem navigasi: **penyimpangan sudut yaw** akibat gangguan eksternal (angin, gesekan, drift sensor). Model fuzzy awal dirancang secara heuristik, kemudian **dilatih menggunakan algoritmo hybrid (least squares + gradient descent)** untuk mengoptimalkan parameter keanggotaan dan output, sehingga menghasilkan sinyal kontrol yang lebih akurat dan stabil.
-
-Program ini mencakup:
-- Desain FIS Sugeno 5-rules
-- Pelatihan ANFIS dengan data input-output
-- Simulasi kontrol loop tertutup (closed-loop)
-- Evaluasi performa dan visualisasi hasil
+> 📌 *This project implements an intelligent adaptive control system based on ANFIS (Adaptive Neuro-Fuzzy Inference System) for correcting yaw angle (heading) in dynamic systems such as drones, autonomous robots, or mobile vehicles. By combining the reasoning power of fuzzy logic and the learning capability of neural networks, the system learns from data to generate optimal control decisions.*
 
 ---
 
-## 🔧 Arsitektur Sistem
+## 📌 Project Overview
 
-### 1. **Input: Error Yaw**
-- Representasi selisih antara orientasi aktual dan setpoint.
-- Rentang: [-30°, +30°]
-- Digunakan sebagai input utama ke sistem kontrol.
+The **ANFIS-based yaw control system** is designed to address common challenges in navigation systems: **yaw deviation** caused by external disturbances (e.g., wind, friction, sensor drift). A heuristic fuzzy inference system (FIS) is initially designed, then **trained using a hybrid learning algorithm (least squares estimation + gradient descent)** to optimize membership functions and output parameters, resulting in a more accurate and stable control signal.
 
-### 2. **Output: Sinyal Kontrol (Control Signal)**
-- Besaran koreksi yang harus diberikan ke aktuator (misalnya: motor, servo).
-- Rentang: [-30, +30] (dalam satuan sudut atau PWM ekivalen).
-- Digunakan untuk memperbaiki orientasi sistem.
+This implementation includes:
+- Design of a 5-rule Sugeno-type FIS
+- ANFIS training with input-output data
+- Closed-loop control simulation
+- Performance evaluation and result visualization
 
-### 3. **Fuzzy Inference System (FIS) – Tipe Sugeno**
-- **Metode**: Sugeno (zero-order, output konstan)
-- **Jumlah Input**: 1 (`Error`)
-- **Jumlah Output**: 1 (`Control`)
-- **Jumlah Aturan**: 5
+---
+
+## 🔧 System Architecture
+
+### 1. **Input: Yaw Error**
+- Represents the difference between actual orientation and desired setpoint.
+- Range: [-30°, +30°]
+- Primary input to the control system.
+
+### 2. **Output: Control Signal**
+- Magnitude of correction applied to actuators (e.g., motors, servos).
+- Range: [-30, +30] (in angular units or equivalent PWM).
+- Used to correct system orientation.
+
+### 3. **Fuzzy Inference System (FIS) – Sugeno Type**
+- **Method**: Zero-order Sugeno (constant output)
+- **Number of Inputs**: 1 (`Error`)
+- **Number of Outputs**: 1 (`Control`)
+- **Number of Rules**: 5
 - **T-Norm**: min
 - **Implication Method**: min
 - **Aggregation**: max
-- **Defuzzification**: Weighted Average (untuk output konstan)
+- **Defuzzification**: Weighted Average
 
-#### 🔹 Himpunan Fuzzy Input (`Error`)
-| Label             | Fungsi Keanggotaan | Parameter (trimf) |
-|-------------------|--------------------|-------------------|
-| Negatif Besar     | trimf              | [-30, -15, -5]    |
-| Negatif Kecil     | trimf              | [-15, -5, 0]      |
-| Nol               | trimf              | [-7, 0, 7]        |
-| Positif Kecil     | trimf              | [0, 5, 15]        |
-| Positif Besar     | trimf              | [5, 15, 30]       |
+#### 🔹 Input Membership Functions (`Error`)
+| Label             | MF Type   | Parameters (trimf) |
+|-------------------|-----------|--------------------|
+| Negative Large    | trimf     | [-30, -15, -5]     |
+| Negative Small    | trimf     | [-15, -5, 0]       |
+| Zero              | trimf     | [-7, 0, 7]         |
+| Positive Small    | trimf     | [0, 5, 15]         |
+| Positive Large    | trimf     | [5, 15, 30]        |
 
-#### 🔹 Himpunan Fuzzy Output (`Control`)
-| Label     | Jenis     | Parameter (konstanta) |
-|----------|-----------|------------------------|
-| Out1     | constant  | -15                    |
-| Out2     | constant  | -5                     |
-| Out3     | constant  | 0                      |
-| Out4     | constant  | 5                      |
-| Out5     | constant  | 15                     |
+#### 🔹 Output Membership Functions (`Control`)
+| Label     | Type       | Parameters (constant) |
+|----------|------------|------------------------|
+| Out1     | constant   | -15                    |
+| Out2     | constant   | -5                     |
+| Out3     | constant   | 0                      |
+| Out4     | constant   | 5                      |
+| Out5     | constant   | 15                     |
 
-#### 🔹 Basis Aturan Fuzzy
+#### 🔹 Fuzzy Rule Base
 | IF Error IS...       | THEN Control = ... |
 |----------------------|--------------------|
-| Negatif Besar        | -15                |
-| Negatif Kecil        | -5                 |
-| Nol                  | 0                  |
-| Positif Kecil        | 5                  |
-| Positif Besar        | 15                 |
+| Negative Large       | -15                |
+| Negative Small       | -5                 |
+| Zero                 | 0                  |
+| Positive Small       | 5                  |
+| Positive Large       | 15                 |
 
-> ⚠️ Catatan: Aturan ini bersifat simetris dan intuitif, cocok untuk sistem kontrol stabilisasi.
-
----
-
-## 🤖 Proses Pelatihan ANFIS
-
-### 🔎 Tujuan Pelatihan
-Mengoptimalkan:
-- Parameter fungsi keanggotaan input (`trimf`)
-- Parameter output (konstanta)
-- Agar output model mendekati `control_target` pada setiap `error_yaw`.
-
-### ⚙️ Konfigurasi ANFIS
-| Parameter               | Nilai                  |
-|-------------------------|------------------------|
-| Metode Inisialisasi     | FIS eksis (custom)     |
-| Epoch                   | 400                    |
-| Algoritma Pembelajaran  | Hybrid (LSE + GD)      |
-| Validasi                | Tidak digunakan        |
-| Tampilan Error          | Tiap epoch             |
-
-### 📈 Output Pelatihan
-- Model terlatih disimpan sebagai: `anfis_trained.fis`
-- Plot error pelatihan ditampilkan (opsional)
-- RMSE antara prediksi dan target dihitung
+> ⚠️ Note: The rule base is symmetric and intuitive, suitable for stabilization control.
 
 ---
 
-## 🔄 Simulasi Kontrol Dinamis
+## 🤖 ANFIS Training Process
 
-Sistem diuji dalam **loop kontrol tertutup (closed-loop)** dengan skenario:
+### 🔎 Training Objective
+Optimize:
+- Parameters of input membership functions (`trimf`)
+- Output constant parameters
+- To minimize error between predicted and target control values.
 
-- **Setpoint**: `0°` (orientasi referensi)
-- **Posisi Awal (yaw)**: `20°`
-- **Kondisi Berhenti**: `|error| < 0.1°` dan `|control| kecil`
-- **Maksimum Iterasi**: 30
+### ⚙️ ANFIS Configuration
+| Parameter               | Value                     |
+|-------------------------|---------------------------|
+| Initialization Method   | Custom FIS                |
+| Epochs                  | 400                       |
+| Learning Algorithm      | Hybrid (LSE + Gradient Descent) |
+| Validation Data         | None                      |
+| Error Display           | Every epoch               |
 
-### 🧮 Update Dinamika Sistem
-Setiap iterasi:
+### 📈 Training Output
+- Trained model saved as: `anfis_trained.fis`
+- Training error plot (optional)
+- RMSE between predicted and actual output
+
+---
+
+## 🔄 Dynamic Control Simulation
+
+The system is tested in a **closed-loop control simulation** with the following scenario:
+
+- **Setpoint**: `0°` (reference orientation)
+- **Initial Yaw**: `20°`
+- **Stopping Condition**: `|error| < 0.1°` and small control effort
+- **Max Iterations**: 30
+
+### 🧮 System Dynamics Update
+At each iteration:
 ```matlab
 error = yaw - set_point;
 control = evalfis(FIS_trained, error);
-yaw = yaw - control;  % Koreksi arah
+yaw = yaw - control;  % Apply correction
